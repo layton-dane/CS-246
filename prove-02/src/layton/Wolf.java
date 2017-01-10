@@ -6,36 +6,51 @@ import java.util.Random;
 /**
  * Created by 22362 on 1/6/2017.
  */
-public class Wolf extends Creature implements Movable, Aware, Aggressor{
+public class Wolf extends Creature implements Movable, Aware, Aggressor, Spawner {
 
     /*
         used to determine which direction the wolf is travelling
-        0- up
-        1- right
+        0- right
+        1- left
         2- down
-        3- left
-     */
+        3- up
+    */
     private int _direction;
+    private boolean _canSpawn;
 
     public Wolf() {
         _direction = new Random().nextInt(4);
         _health = 1;
+        _canSpawn = false;
+    }
+
+    @Override
+    public Creature spawnNewCreature() {
+        if (_canSpawn) {
+            Wolf w = new Wolf();
+            int thisX = this._location.x;
+            int thisY = this._location.y;
+            w.setLocation(new Point(--thisX, thisY));
+            _canSpawn = false;
+            return w;
+        }
+        return null;
     }
 
     @Override
     public void move() {
         switch (_direction) {
             case 0:
-                _location.y++;
-                break;
-            case 1:
                 _location.x++;
                 break;
+            case 1:
+                _location.x--;
+                break;
             case 2:
-                _location.y--;
+                _location.y++;
                 break;
             case 3:
-                _location.x--;
+                _location.y--;
                 break;
             default:
                 break;
@@ -46,6 +61,9 @@ public class Wolf extends Creature implements Movable, Aware, Aggressor{
     public void attack(Creature target) {
         if (target instanceof Animal) {
             target.takeDamage(5);
+            if (!target.isAlive())
+                _canSpawn = true;
+
             _health++;
         }
     }
@@ -53,41 +71,57 @@ public class Wolf extends Creature implements Movable, Aware, Aggressor{
     @Override
     public void senseNeighbors(Creature above, Creature below, Creature left, Creature right) {
         switch (_direction) {
-            case 0:
-                if (above != null) {} // no need to change direction
-                else if (right != null)
-                    _direction = 1;
-                else if (below != null)
+            case 0: // moving right
+                // check right
+                if (right instanceof Animal) {} // do not change direction
+                // check down
+                else if (below instanceof Animal)
                     _direction = 2;
-                else if (left != null)
+                // check left
+                else if (left instanceof Animal)
+                    _direction = 1;
+                // check up
+                else if (above instanceof Animal)
                     _direction = 3;
                 break;
-            case 1:
-                if (right != null) {} // no need to change direction
-                else if (below != null)
-                    _direction = 2;
-                else if (left != null)
+            case 1: // moving left
+                // check left
+                if (left instanceof Animal) {} // do not change direction
+                // check up
+                else if (above instanceof Animal)
                     _direction = 3;
-                else if (above != null)
+                // check right
+                else if (right instanceof Animal)
+                    _direction = 0;
+                // check down
+                else if (below instanceof Animal)
+                    _direction = 2;
+                break;
+            case 2: // moving down
+                // check down
+                if (below instanceof Animal) {} // do not change direction
+                // check left
+                else if (left instanceof Animal)
+                    _direction = 1;
+                // check up
+                else if (above instanceof Animal)
+                    _direction = 3;
+                // check right
+                else if (right instanceof Animal)
                     _direction = 0;
                 break;
-            case 2:
-                if (below != null) {} // no need to change direction
-                else if (left != null)
-                    _direction = 3;
-                else if (above != null)
+            case 3: // moving up
+                // check up
+                if (above instanceof Animal) {} // do not change direction
+                // check right
+                else if (right instanceof Animal)
                     _direction = 0;
-                else if (right != null)
-                    _direction = 1;
-                break;
-            case 3:
-                if (left != null) {} // no need to change direction
-                else if (above != null)
-                    _direction = 0;
-                else if (right != null)
-                    _direction = 1;
-                else if (below != null)
+                // check down
+                else if (below instanceof Animal)
                     _direction = 2;
+                // check left
+                else if (left instanceof Animal)
+                    _direction = 1;
                 break;
             default:
                 break;

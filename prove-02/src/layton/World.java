@@ -161,6 +161,5 @@ public class World extends Canvas implements Runnable  {
 		for(int c = 0; c < cols; c++) {
 			context.drawLine(c * _cell.width, 0, c * _cell.width, _world.height);
 		}
-		
 	}
 }

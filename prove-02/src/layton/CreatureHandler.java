@@ -1,5 +1,6 @@
 package layton;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.awt.Point;
 import java.util.List;
@@ -115,7 +116,7 @@ public class CreatureHandler
 	* act on their implemented behaviors.
 	*/
 	public void updateCreatures() {
-
+        List<Creature> newCreatures = new ArrayList<Creature>();
 		// Handle all our creature behaviors here. Since we don't know ahead of time
 		// which creatures implement which behaviors, we can use the instanceof keyword
 		// to see if a given instance implements a particular interface.
@@ -126,13 +127,24 @@ public class CreatureHandler
                 continue;
 
             if(c instanceof Aware) {
-                Creature above = getTarget(c, 0, -1);
-                Creature below = getTarget(c, 0, 1);
-                Creature left = getTarget(c, -1, 0);
-                Creature right = getTarget(c, 1, 0);
+            	if (c instanceof Wolf) {
+            		Creature above = getTarget(c, 0,-2);
+            		Creature below = getTarget(c, 0,2);
+            		Creature left = getTarget(c,-2, 0);
+            		Creature right = getTarget(c,2,0);
 
-                Aware a = (Aware)c;
-                a.senseNeighbors(above, below, left, right);
+            		Aware a = (Aware)c;
+            		a.senseNeighbors(above,below,left,right);
+				}
+                else {
+            		Creature above = getTarget(c, 0, -1);
+					Creature below = getTarget(c, 0, 1);
+					Creature left = getTarget(c, -1, 0);
+					Creature right = getTarget(c, 1, 0);
+
+					Aware a = (Aware)c;
+					a.senseNeighbors(above, below, left, right);
+				}
             }
 
             if(c instanceof Movable) {
@@ -144,6 +156,16 @@ public class CreatureHandler
                 Aggressor a = (Aggressor)c;
                 a.attack(target);
             }
+
+            if (c instanceof Spawner) {
+                Spawner s = (Spawner)c;
+                Creature newC = s.spawnNewCreature();
+                newCreatures.add(newC);
+            }
+        }
+        for (Creature c : newCreatures) {
+		    Creature newC = c;
+		    _creatures.add(newC);
         }
 	}
 }
