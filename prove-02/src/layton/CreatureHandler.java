@@ -121,21 +121,21 @@ public class CreatureHandler
 		// which creatures implement which behaviors, we can use the instanceof keyword
 		// to see if a given instance implements a particular interface.
 		for(Creature c : _creatures) {
-				
+
             // Skip dead creatures
             if(!c.isAlive())
                 continue;
 
             if(c instanceof Aware) {
             	if (c instanceof Wolf) {
-            		Creature above = getTarget(c, 0,-2);
-            		Creature below = getTarget(c, 0,2);
-            		Creature left = getTarget(c,-2, 0);
-            		Creature right = getTarget(c,2,0);
+                    Creature above = getTarget(c, 0, -2);
+                    Creature below = getTarget(c, 0, 2);
+                    Creature left = getTarget(c, -2, 0);
+                    Creature right = getTarget(c, 2, 0);
 
-            		Aware a = (Aware)c;
-            		a.senseNeighbors(above,below,left,right);
-				}
+                    Aware a = (Aware) c;
+                    a.senseNeighbors(above, below, left, right);
+                }
                 else {
             		Creature above = getTarget(c, 0, -1);
 					Creature below = getTarget(c, 0, 1);
@@ -152,15 +152,48 @@ public class CreatureHandler
             }
 
             if(c instanceof Aggressor) {
-                Creature target = getTarget(c, 0, 0);
-                Aggressor a = (Aggressor)c;
-                a.attack(target);
+                if (c instanceof Hunter) {
+                    Random rand = new Random();
+                    int dir = rand.nextInt(4);
+                    Creature target = null;
+                    for (int i = 1; i < 11; i++) {
+                        switch (dir) {
+                            case 0:
+                                target = getTarget(c, i,0);
+                                break;
+                            case 1:
+                                target = getTarget(c, -i, 0);
+                                break;
+                            case 2:
+                                target = getTarget(c,0, i);
+                                break;
+                            case 3:
+                                target = getTarget(c,0, -i);
+                                break;
+                            default:
+                                break;
+                        }
+                        if (target != null) {
+                            break;
+                        }
+                    }
+                    Aggressor a = (Aggressor)c;
+                    a.attack(target);
+                }
+                else {
+                    Creature target = getTarget(c, 0, 0);
+                    Aggressor a = (Aggressor)c;
+                    a.attack(target);
+                }
+
             }
 
             if (c instanceof Spawner) {
                 Spawner s = (Spawner)c;
                 Creature newC = s.spawnNewCreature();
-                newCreatures.add(newC);
+                if (newC != null) {
+                	newCreatures.add(newC);
+				}
             }
         }
         for (Creature c : newCreatures) {

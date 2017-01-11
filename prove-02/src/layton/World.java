@@ -1,14 +1,9 @@
 package layton;
 
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Color;
+import java.awt.*;
 import javax.swing.JFrame;
 import java.util.List;
 import java.util.ArrayList;
-import java.awt.Point;
-import java.awt.Font;
-import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -143,6 +138,11 @@ public class World extends Canvas implements Runnable  {
 					break;
 				case Square:
 					context.fillRect(x, y, _cell.width, _cell.height);
+					break;
+				case Triangle:
+					int xpoints[] = {x, x + _cell.width / 2, x + _cell.width, x};
+					int ypoints[] = {y, y - _cell.height, y, y};
+					context.fillPolygon(xpoints, ypoints, 3);
 					break;
 				default:
 					break;

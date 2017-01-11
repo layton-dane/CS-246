@@ -25,6 +25,11 @@ public class Zombie extends Creature implements Movable , Aggressor {
         if (target instanceof Animal) {
             target.takeDamage(10);
         }
+        // Zombies attack hunters, but hunters deal damage as well
+        else if (target instanceof Hunter) {
+            target.takeDamage(1);
+            this.takeDamage(1);
+        }
     }
 
     /**

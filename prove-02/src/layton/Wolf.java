@@ -70,6 +70,16 @@ public class Wolf extends Creature implements Movable, Aware, Aggressor, Spawner
 
     @Override
     public void senseNeighbors(Creature above, Creature below, Creature left, Creature right) {
+        // wolves avoid hunters
+        if (above instanceof Hunter)
+            _direction = 2;
+        if (below instanceof Hunter)
+            _direction = 3;
+        if (left instanceof Hunter)
+            _direction = 0;
+        if (right instanceof Hunter)
+            _direction = 1;
+
         switch (_direction) {
             case 0: // moving right
                 // check right
